@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { RotateCcw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { restoreTask } from "@/lib/actions";
 
 export function RestoreButton({ taskId }: { taskId: string }) {
@@ -19,14 +21,16 @@ export function RestoreButton({ taskId }: { taskId: string }) {
 
   return (
     <div className="flex flex-col items-end gap-1">
-      <button
+      <Button
+        variant="outline"
+        size="sm"
         onClick={handleClick}
         disabled={isPending}
-        className="text-xs font-medium text-blue-600 hover:text-blue-800 disabled:opacity-50"
       >
+        <RotateCcw />
         {isPending ? "Restoring…" : "Restore"}
-      </button>
-      {error && <span className="text-xs text-red-600">{error}</span>}
+      </Button>
+      {error && <span className="text-xs text-destructive">{error}</span>}
     </div>
   );
 }

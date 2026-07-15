@@ -1,9 +1,23 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 import { updateTaskStatus } from "@/lib/actions";
 import { STATUSES } from "@/lib/constants";
 import type { Status } from "@/lib/types";
+
+const STATUS_DOT: Record<Status, string> = {
+  "Not Started": "bg-muted-foreground/50",
+  "In Progress": "bg-blue-500",
+  Completed: "bg-emerald-500",
+};
 
 export function StatusSelect({
   taskId,
@@ -15,10 +29,10 @@ export function StatusSelect({
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  function handleChange(next: Status) {
+  function handleChange(next: string) {
     setError(null);
     startTransition(async () => {
-      const result = await updateTaskStatus(taskId, next);
+      const result = await updateTaskStatus(taskId, next as Status);
       if (!result.ok) {
         setError(result.error ?? "Failed to update status.");
       }
@@ -27,19 +41,25 @@ export function StatusSelect({
 
   return (
     <div className="flex flex-col gap-1">
-      <select
-        value={status}
-        disabled={isPending}
-        onChange={(e) => handleChange(e.target.value as Status)}
-        className="rounded border border-gray-300 bg-white px-2 py-1 text-sm disabled:opacity-50"
-      >
-        {STATUSES.map((s) => (
-          <option key={s} value={s}>
-            {s}
-          </option>
-        ))}
-      </select>
-      {error && <span className="text-xs text-red-600">{error}</span>}
+      <Select value={status} onValueChange={handleChange} disabled={isPending}>
+        <SelectTrigger size="sm" className="w-[150px]">
+          <SelectValue>
+            <span
+              className={cn("size-1.5 rounded-full", STATUS_DOT[status])}
+            />
+            {status}
+          </SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          {STATUSES.map((s) => (
+            <SelectItem key={s} value={s}>
+              <span className={cn("size-1.5 rounded-full", STATUS_DOT[s])} />
+              {s}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      {error && <span className="text-xs text-destructive">{error}</span>}
     </div>
   );
 }

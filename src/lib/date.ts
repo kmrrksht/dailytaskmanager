@@ -13,13 +13,14 @@ import type { Task } from "./types";
 export type OverdueLevel = "none" | "yellow" | "red";
 
 export function getOverdueLevel(dueOn: string, now = new Date()): OverdueLevel {
-  const daysOverdue = differenceInCalendarDays(
-    startOfDay(now),
-    startOfDay(parseISO(dueOn))
-  );
+  const daysOverdue = getDaysOverdue(dueOn, now);
   if (daysOverdue > OVERDUE_RED_DAYS) return "red";
   if (daysOverdue > OVERDUE_YELLOW_DAYS) return "yellow";
   return "none";
+}
+
+export function getDaysOverdue(dueOn: string, now = new Date()): number {
+  return differenceInCalendarDays(startOfDay(now), startOfDay(parseISO(dueOn)));
 }
 
 export function formatDueDate(dueOn: string): string {

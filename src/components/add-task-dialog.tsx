@@ -1,171 +1,182 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { createTask } from "@/lib/actions";
 import { PRIORITIES, STATUSES } from "@/lib/constants";
-import type { DependencyType } from "@/lib/types";
+import type { DependencyType, Priority, Status } from "@/lib/types";
 
 export function AddTaskDialog() {
   const [isOpen, setIsOpen] = useState(false);
   const [dependencyType, setDependencyType] = useState<DependencyType>("Self");
+  const [priority, setPriority] = useState<Priority>("Medium");
+  const [status, setStatus] = useState<Status>("Not Started");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const formRef = useRef<HTMLFormElement>(null);
 
-  function close() {
-    setIsOpen(false);
+  function reset() {
     setError(null);
     setDependencyType("Self");
+    setPriority("Medium");
+    setStatus("Not Started");
     formRef.current?.reset();
   }
 
   function handleSubmit(formData: FormData) {
     setError(null);
+    formData.set("priority", priority);
+    formData.set("status", status);
+    formData.set("dependency_type", dependencyType);
     startTransition(async () => {
       const result = await createTask(formData);
       if (!result.ok) {
         setError(result.error ?? "Failed to create task.");
         return;
       }
-      close();
+      reset();
+      setIsOpen(false);
     });
   }
 
   return (
-    <>
-      <button
-        onClick={() => setIsOpen(true)}
-        className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
-      >
-        Add Task
-      </button>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open);
+        if (!open) reset();
+      }}
+    >
+      <DialogTrigger
+        render={
+          <Button>
+            <Plus />
+            Add Task
+          </Button>
+        }
+      />
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Add Task</DialogTitle>
+          <DialogDescription>
+            Fill in the details below to create a new task.
+          </DialogDescription>
+        </DialogHeader>
 
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-            <h2 className="mb-4 text-lg font-semibold text-gray-900">
-              Add Task
-            </h2>
-
-            <form ref={formRef} action={handleSubmit} className="flex flex-col gap-4">
-              <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
-                  Task name
-                </label>
-                <input
-                  name="task_name"
-                  type="text"
-                  required
-                  className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
-                />
-              </div>
-
-              <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
-                  Due date
-                </label>
-                <input
-                  name="due_on"
-                  type="date"
-                  required
-                  className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
-                />
-              </div>
-
-              <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
-                  Priority
-                </label>
-                <select
-                  name="priority"
-                  defaultValue="Medium"
-                  className="w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm"
-                >
-                  {PRIORITIES.map((p) => (
-                    <option key={p} value={p}>
-                      {p}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <fieldset>
-                <legend className="mb-1 block text-sm font-medium text-gray-700">
-                  Dependency
-                </legend>
-                <div className="flex gap-4">
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="radio"
-                      name="dependency_type"
-                      value="Self"
-                      checked={dependencyType === "Self"}
-                      onChange={() => setDependencyType("Self")}
-                    />
-                    Self
-                  </label>
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="radio"
-                      name="dependency_type"
-                      value="Other"
-                      checked={dependencyType === "Other"}
-                      onChange={() => setDependencyType("Other")}
-                    />
-                    Other
-                  </label>
-                </div>
-                {dependencyType === "Other" && (
-                  <input
-                    name="dependency_person"
-                    type="text"
-                    placeholder="Name of person"
-                    required
-                    className="mt-2 w-full rounded border border-gray-300 px-3 py-2 text-sm"
-                  />
-                )}
-              </fieldset>
-
-              <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
-                  Status
-                </label>
-                <select
-                  name="status"
-                  defaultValue="Not Started"
-                  className="w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm"
-                >
-                  {STATUSES.map((s) => (
-                    <option key={s} value={s}>
-                      {s}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {error && <p className="text-sm text-red-600">{error}</p>}
-
-              <div className="mt-2 flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={close}
-                  disabled={isPending}
-                  className="rounded-md px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 disabled:opacity-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isPending}
-                  className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50"
-                >
-                  {isPending ? "Saving…" : "Save Task"}
-                </button>
-              </div>
-            </form>
+        <form
+          ref={formRef}
+          action={handleSubmit}
+          className="flex flex-col gap-4"
+        >
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="task_name">Task name</Label>
+            <Input id="task_name" name="task_name" type="text" required />
           </div>
-        </div>
-      )}
-    </>
+
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="due_on">Due date</Label>
+            <Input id="due_on" name="due_on" type="date" required />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label>Priority</Label>
+            <Select
+              value={priority}
+              onValueChange={(v) => setPriority(v as Priority)}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {PRIORITIES.map((p) => (
+                  <SelectItem key={p} value={p}>
+                    {p}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label>Dependency</Label>
+            <RadioGroup
+              value={dependencyType}
+              onValueChange={(v) => setDependencyType(v as DependencyType)}
+              className="flex flex-row gap-5"
+            >
+              <div className="flex items-center gap-2">
+                <RadioGroupItem value="Self" id="dep-self" />
+                <Label htmlFor="dep-self" className="font-normal">
+                  Self
+                </Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <RadioGroupItem value="Other" id="dep-other" />
+                <Label htmlFor="dep-other" className="font-normal">
+                  Other
+                </Label>
+              </div>
+            </RadioGroup>
+            {dependencyType === "Other" && (
+              <Input
+                name="dependency_person"
+                type="text"
+                placeholder="Name of person"
+                required
+                className="mt-1"
+              />
+            )}
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label>Status</Label>
+            <Select value={status} onValueChange={(v) => setStatus(v as Status)}>
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {STATUSES.map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {s}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {error && <p className="text-sm text-destructive">{error}</p>}
+
+          <DialogFooter className="-mx-0 -mb-0 mt-2 border-t-0 bg-transparent p-0">
+            <DialogClose render={<Button type="button" variant="ghost" />}>
+              Cancel
+            </DialogClose>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Saving…" : "Save Task"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

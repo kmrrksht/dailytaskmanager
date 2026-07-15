@@ -1,27 +1,24 @@
+import { TableCell, TableRow } from "@/components/ui/table";
 import type { TaskGroup as TaskGroupType } from "@/lib/date";
 import { TaskRow } from "./task-row";
 
 export function TaskGroup({ group }: { group: TaskGroupType }) {
   return (
-    <div className="mb-6">
-      <h2 className="mb-2 text-sm font-semibold text-gray-500 uppercase tracking-wide">
-        {group.label}
-      </h2>
-      <table className="w-full border-collapse">
-        <thead>
-          <tr className="border-b border-gray-200 text-left text-xs font-medium text-gray-500">
-            <th className="pb-2 pr-4 font-medium">Created On</th>
-            <th className="pb-2 pr-4 font-medium">Task Name</th>
-            <th className="pb-2 pr-4 font-medium">Due On</th>
-            <th className="pb-2 font-medium">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {group.tasks.map((task) => (
-            <TaskRow key={task.id} task={task} />
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <>
+      <TableRow className="border-none hover:bg-transparent">
+        <TableCell
+          colSpan={4}
+          className="bg-muted/40 py-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase"
+        >
+          {group.label}
+          <span className="ml-2 font-normal normal-case text-muted-foreground/70">
+            {group.tasks.length} {group.tasks.length === 1 ? "task" : "tasks"}
+          </span>
+        </TableCell>
+      </TableRow>
+      {group.tasks.map((task) => (
+        <TaskRow key={task.id} task={task} />
+      ))}
+    </>
   );
 }

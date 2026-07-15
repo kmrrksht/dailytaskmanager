@@ -2,38 +2,48 @@ import type { Task } from "@/lib/types";
 import { formatDueDate, formatCompletedOn } from "@/lib/date";
 import { PriorityBadge } from "./priority-badge";
 import { RestoreButton } from "./restore-button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export function CompletedTable({ tasks }: { tasks: Task[] }) {
   return (
-    <table className="w-full border-collapse">
-      <thead>
-        <tr className="border-b border-gray-200 text-left text-xs font-medium text-gray-500">
-          <th className="pb-2 pr-4 font-medium">Task Name</th>
-          <th className="pb-2 pr-4 font-medium">Priority</th>
-          <th className="pb-2 pr-4 font-medium">Due On</th>
-          <th className="pb-2 pr-4 font-medium">Completed On</th>
-          <th className="pb-2 font-medium" />
-        </tr>
-      </thead>
-      <tbody>
+    <Table>
+      <TableHeader>
+        <TableRow className="hover:bg-transparent">
+          <TableHead>Task Name</TableHead>
+          <TableHead className="w-[120px]">Priority</TableHead>
+          <TableHead className="w-[160px]">Due On</TableHead>
+          <TableHead className="w-[160px]">Completed On</TableHead>
+          <TableHead className="w-[140px]" />
+        </TableRow>
+      </TableHeader>
+      <TableBody>
         {tasks.map((task) => (
-          <tr key={task.id} className="border-b border-gray-100 last:border-0">
-            <td className="py-3 pr-4 text-sm text-gray-900">{task.task_name}</td>
-            <td className="py-3 pr-4 text-sm">
+          <TableRow key={task.id}>
+            <TableCell className="text-sm font-medium text-foreground">
+              {task.task_name}
+            </TableCell>
+            <TableCell>
               <PriorityBadge priority={task.priority} />
-            </td>
-            <td className="py-3 pr-4 text-sm text-gray-700">
+            </TableCell>
+            <TableCell className="text-sm text-muted-foreground">
               {formatDueDate(task.due_on)}
-            </td>
-            <td className="py-3 pr-4 text-sm text-gray-500">
+            </TableCell>
+            <TableCell className="text-sm text-muted-foreground">
               {task.completed_at ? formatCompletedOn(task.completed_at) : "—"}
-            </td>
-            <td className="py-3 text-right">
+            </TableCell>
+            <TableCell className="text-right">
               <RestoreButton taskId={task.id} />
-            </td>
-          </tr>
+            </TableCell>
+          </TableRow>
         ))}
-      </tbody>
-    </table>
+      </TableBody>
+    </Table>
   );
 }

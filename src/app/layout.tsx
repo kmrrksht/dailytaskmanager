@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Link from "next/link";
+import { CheckCheck } from "lucide-react";
+import { NavLink } from "@/components/nav-link";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -28,23 +29,24 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-gray-50">
-        <header className="border-b border-gray-200 bg-white">
-          <div className="mx-auto flex max-w-4xl items-center gap-6 px-4 py-4">
-            <span className="text-lg font-semibold text-gray-900">
-              Task Manager
-            </span>
-            <nav className="flex gap-4 text-sm font-medium text-gray-600">
-              <Link href="/" className="hover:text-gray-900">
-                Dashboard
-              </Link>
-              <Link href="/completed" className="hover:text-gray-900">
-                Completed
-              </Link>
+      <body className="flex min-h-full flex-col bg-muted/40">
+        <header className="sticky top-0 z-40 border-b border-border/70 bg-background/80 backdrop-blur-md supports-backdrop-filter:bg-background/60">
+          <div className="mx-auto flex w-full max-w-5xl items-center gap-2 px-6 py-3.5">
+            <div className="mr-4 flex items-center gap-2">
+              <span className="flex size-6 items-center justify-center rounded-md bg-foreground text-background">
+                <CheckCheck className="size-3.5" strokeWidth={2.5} />
+              </span>
+              <span className="text-[15px] font-semibold tracking-tight text-foreground">
+                Task Manager
+              </span>
+            </div>
+            <nav className="flex items-center gap-1">
+              <NavLink href="/">Dashboard</NavLink>
+              <NavLink href="/completed">Completed</NavLink>
             </nav>
           </div>
         </header>
-        <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8">
+        <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-10">
           {children}
         </main>
       </body>
