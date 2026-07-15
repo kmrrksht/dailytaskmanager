@@ -2,6 +2,7 @@ import { getIncompleteTasks } from "@/lib/tasks";
 import { groupByDueDate } from "@/lib/date";
 import { AddTaskDialog } from "@/components/add-task-dialog";
 import { TaskGroup } from "@/components/task-group";
+import { MobileTaskGroup } from "@/components/mobile-task-group";
 import { EmptyState } from "@/components/empty-state";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -37,29 +38,36 @@ export default async function DashboardPage() {
       ) : (
         <Card className="gap-0 overflow-hidden p-0">
           <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow className="hover:bg-transparent">
-                  <TableHead className="w-[140px] px-4 py-3 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                    Created On
-                  </TableHead>
-                  <TableHead className="px-4 py-3 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                    Task Name
-                  </TableHead>
-                  <TableHead className="w-[240px] px-4 py-3 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                    Due On
-                  </TableHead>
-                  <TableHead className="w-[170px] px-4 py-3 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                    Status
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {groups.map((group) => (
-                  <TaskGroup key={group.dueOn} group={group} />
-                ))}
-              </TableBody>
-            </Table>
+            <div className="divide-y divide-border sm:hidden">
+              {groups.map((group) => (
+                <MobileTaskGroup key={group.dueOn} group={group} />
+              ))}
+            </div>
+            <div className="hidden sm:block">
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead className="w-[140px] px-4 py-3 text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                      Created On
+                    </TableHead>
+                    <TableHead className="px-4 py-3 text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                      Task Name
+                    </TableHead>
+                    <TableHead className="w-[240px] px-4 py-3 text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                      Due On
+                    </TableHead>
+                    <TableHead className="w-[170px] px-4 py-3 text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                      Status
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {groups.map((group) => (
+                    <TaskGroup key={group.dueOn} group={group} />
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       )}
