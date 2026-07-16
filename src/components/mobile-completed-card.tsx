@@ -1,5 +1,6 @@
 import { formatCompletedOn, formatDueDate } from "@/lib/date";
 import type { Task } from "@/lib/types";
+import { DeleteTaskDialog } from "./delete-task-dialog";
 import { PriorityBadge } from "./priority-badge";
 import { RestoreButton } from "./restore-button";
 
@@ -19,8 +20,9 @@ export function MobileCompletedCard({ task }: { task: Task }) {
           {task.completed_at ? formatCompletedOn(task.completed_at) : "—"}
         </span>
       </div>
-      <div className="flex justify-end">
+      <div className="flex items-center justify-end gap-1">
         <RestoreButton taskId={task.id} />
+        <DeleteTaskDialog taskId={task.id} taskName={task.task_name} />
       </div>
     </div>
   );

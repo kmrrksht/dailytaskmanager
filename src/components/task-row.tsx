@@ -1,6 +1,7 @@
 import { TableCell, TableRow } from "@/components/ui/table";
 import type { Task } from "@/lib/types";
 import { formatCreatedOn } from "@/lib/date";
+import { DeleteTaskDialog } from "./delete-task-dialog";
 import { DueIndicator } from "./due-indicator";
 import { EditTaskDialog } from "./edit-task-dialog";
 import { PriorityBadge } from "./priority-badge";
@@ -34,7 +35,10 @@ export function TaskRow({ task }: { task: Task }) {
         <StatusSelect taskId={task.id} status={task.status} />
       </TableCell>
       <TableCell className="px-4 py-3.5 text-right">
-        <EditTaskDialog task={task} />
+        <div className="flex items-center justify-end gap-1">
+          <EditTaskDialog task={task} />
+          <DeleteTaskDialog taskId={task.id} taskName={task.task_name} />
+        </div>
       </TableCell>
     </TableRow>
   );

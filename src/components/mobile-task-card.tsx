@@ -1,6 +1,7 @@
 import { User } from "lucide-react";
 import { formatCreatedOn } from "@/lib/date";
 import type { Task } from "@/lib/types";
+import { DeleteTaskDialog } from "./delete-task-dialog";
 import { DueIndicator } from "./due-indicator";
 import { EditTaskDialog } from "./edit-task-dialog";
 import { PriorityBadge } from "./priority-badge";
@@ -17,7 +18,10 @@ export function MobileTaskCard({ task }: { task: Task }) {
             </span>
             <PriorityBadge priority={task.priority} />
           </div>
-          <EditTaskDialog task={task} />
+          <div className="flex items-center gap-1">
+            <EditTaskDialog task={task} />
+            <DeleteTaskDialog taskId={task.id} taskName={task.task_name} />
+          </div>
         </div>
         {task.dependency_type === "Other" && task.dependency_person && (
           <div className="flex items-center gap-1 text-xs text-muted-foreground">

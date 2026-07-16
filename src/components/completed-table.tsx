@@ -1,5 +1,6 @@
 import type { Task } from "@/lib/types";
 import { formatDueDate, formatCompletedOn } from "@/lib/date";
+import { DeleteTaskDialog } from "./delete-task-dialog";
 import { PriorityBadge } from "./priority-badge";
 import { RestoreButton } from "./restore-button";
 import { MobileCompletedCard } from "./mobile-completed-card";
@@ -57,7 +58,13 @@ export function CompletedTable({ tasks }: { tasks: Task[] }) {
                     : "—"}
                 </TableCell>
                 <TableCell className="px-4 py-3.5 text-right">
-                  <RestoreButton taskId={task.id} />
+                  <div className="flex items-center justify-end gap-1">
+                    <RestoreButton taskId={task.id} />
+                    <DeleteTaskDialog
+                      taskId={task.id}
+                      taskName={task.task_name}
+                    />
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
