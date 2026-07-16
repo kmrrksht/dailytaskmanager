@@ -1,7 +1,5 @@
 import { getCompletedTasks } from "@/lib/tasks";
-import { CompletedTable } from "@/components/completed-table";
-import { EmptyState } from "@/components/empty-state";
-import { Card, CardContent } from "@/components/ui/card";
+import { CompletedTasksSection } from "@/components/completed-tasks-section";
 
 export default async function CompletedPage() {
   const tasks = await getCompletedTasks();
@@ -17,15 +15,7 @@ export default async function CompletedPage() {
         </p>
       </div>
 
-      {tasks.length === 0 ? (
-        <EmptyState message="No completed tasks in the last 30 days." />
-      ) : (
-        <Card className="gap-0 overflow-hidden p-0">
-          <CardContent className="p-0">
-            <CompletedTable tasks={tasks} />
-          </CardContent>
-        </Card>
-      )}
+      <CompletedTasksSection tasks={tasks} />
     </div>
   );
 }
